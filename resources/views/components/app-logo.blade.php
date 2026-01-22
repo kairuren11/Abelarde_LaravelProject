@@ -42,7 +42,7 @@
 
 <div>
             <h1 class="text-xl font-bold font-gaming tracking-widest leading-none" style="color:#00f6ff; text-shadow:0 0 6px rgba(0,246,255,0.95), 0 0 12px rgba(0,246,255,0.6);">
-                ABELARDE
+                Game Index
             </h1>
         </div>
     </div>

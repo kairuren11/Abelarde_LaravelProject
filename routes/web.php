@@ -17,10 +17,16 @@ Route::get('/dashboard', [GameController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/games/trash', [GameController::class, 'trash'])->name('games.trash');
+    Route::get('/games/export/pdf', [GameController::class, 'export'])->name('games.export');
+    
     Route::get('/games', [GameController::class, 'index'])->name('games.index');
     Route::post('/games', [GameController::class, 'store'])->name('games.store');
     Route::put('/games/{game}', [GameController::class, 'update'])->name('games.update');
     Route::delete('/games/{game}', [GameController::class, 'destroy'])->name('games.destroy');
+    
+    Route::put('/games/{id}/restore', [GameController::class, 'restore'])->name('games.restore');
+    Route::delete('/games/{id}/force-delete', [GameController::class, 'forceDelete'])->name('games.force-delete');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
