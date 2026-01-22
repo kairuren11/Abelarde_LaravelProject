@@ -29,9 +29,8 @@ class GameController extends Controller
 
         $games = $query->latest()->get();
         $platforms = Platform::all();
-        $activePlatforms = Platform::count();
 
-        return view('dashboard', compact('games', 'platforms', 'activePlatforms'));
+        return view('dashboard', compact('games', 'platforms'));
     }
 
     public function trash()
@@ -103,7 +102,7 @@ class GameController extends Controller
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/games', $filename);
+            $file->storeAs('games', $filename, 'public');
             $validated['photo'] = $filename;
         }
 
@@ -130,7 +129,7 @@ class GameController extends Controller
 
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/games', $filename);
+            $file->storeAs('games', $filename, 'public');
             $validated['photo'] = $filename;
         }
 

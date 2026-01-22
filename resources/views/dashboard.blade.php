@@ -1,298 +1,444 @@
-
 <x-layouts.app :title="__('Dashboard')">
-    <div class="flex h-full w-full flex-1 flex-col gap-6 rounded-2xl">
+<style>
+    .cyberpunk-bg {
+        position: relative;
+        background: #000000;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+    
+    .cyberpunk-bg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            linear-gradient(90deg, rgba(0, 255, 255, 0.02) 0%, transparent 50%, rgba(255, 0, 255, 0.02) 100%),
+            linear-gradient(0deg, rgba(0, 255, 255, 0.03) 0%, transparent 50%, rgba(255, 0, 255, 0.03) 100%),
+            radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 50%);
+        z-index: 0;
+        will-change: opacity;
+    }
+    
+    .cyberpunk-bg::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            linear-gradient(rgba(0, 255, 255, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 255, 0.06) 1px, transparent 1px);
+        background-size: 50px 50px;
+        opacity: 0.15;
+        z-index: 0;
+        transform: translateZ(0);
+    }
+    
+    .cyberpunk-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .cyberpunk-card {
+        background: rgba(10, 10, 15, 0.95);
+        border: 1px solid rgba(0, 255, 255, 0.15);
+        box-shadow: 
+            0 0 20px rgba(0, 255, 255, 0.08),
+            inset 0 0 20px rgba(0, 255, 255, 0.03);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transform: translateZ(0);
+    }
+    
+    .cyberpunk-card:hover {
+        border-color: rgba(0, 255, 255, 0.3);
+        box-shadow: 
+            0 0 30px rgba(0, 255, 255, 0.15),
+            inset 0 0 30px rgba(0, 255, 255, 0.08);
+    }
+    
+    .cyberpunk-input {
+        background: rgba(5, 5, 10, 0.9);
+        border: 1px solid rgba(0, 255, 255, 0.25);
+        color: #00ffff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .cyberpunk-input:focus {
+        border-color: #00ffff;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        outline: none;
+    }
+    
+    .cyberpunk-input::placeholder {
+        color: rgba(0, 255, 255, 0.5);
+    }
+    
+    .cyberpunk-button {
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+        border: 1px solid rgba(0, 255, 255, 0.5);
+        color: #00ffff;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        transform: translateZ(0);
+    }
+    
+    .cyberpunk-button:hover {
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 255, 0.3));
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+        transform: translateY(-2px) translateZ(0);
+    }
+    
+    .neon-text {
+        text-shadow: 
+            0 0 5px currentColor,
+            0 0 10px currentColor,
+            0 0 15px currentColor;
+    }
+    
+    .cyberpunk-table {
+        background: rgba(10, 10, 15, 0.95);
+        border: 1px solid rgba(0, 255, 255, 0.15);
+    }
+    
+    .cyberpunk-table thead {
+        background: rgba(0, 255, 255, 0.08);
+        border-bottom: 2px solid rgba(0, 255, 255, 0.25);
+    }
+    
+    .cyberpunk-table th {
+        color: #00ffff;
+        text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    }
+    
+    .cyberpunk-table td {
+        color: rgba(255, 255, 255, 0.9);
+        border-bottom: 1px solid rgba(0, 255, 255, 0.08);
+    }
+    
+    .cyberpunk-table tr {
+        transition: background-color 0.15s ease;
+    }
+    
+    .cyberpunk-table tr:hover {
+        background: rgba(0, 255, 255, 0.05);
+    }
+</style>
 
+<div class="cyberpunk-bg">
+    <div class="cyberpunk-content p-6">
+    {{-- Flash Messages --}}
     @if(session('success'))
-        <div class="rounded-lg bg-gradient-to-r from-emerald-900/30 to-emerald-900/20 border-l-4 border-emerald-500 p-4 text-emerald-300 shadow-sm">
-            <div class="flex items-center">
-                <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                {{ session('success') }}
-            </div>
+        <div class="mb-4 rounded-lg bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-700 p-4 text-green-700 dark:text-green-300">
+            {{ session('success') }}
         </div>
     @endif
 
-    <div class="grid auto-rows-min gap-6 md:grid-cols-3">
-            <div class="group relative overflow-hidden rounded-2xl border border-blue-900/40 bg-gradient-to-br from-slate-800 via-slate-800/80 to-blue-900/30 p-6 hover:shadow-2xl hover:shadow-blue-900/30 transition-all duration-300">
-                <div class="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="relative flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-semibold text-blue-400">Total Games</p>
-                        <h3 class="mt-3 text-4xl font-bold text-white">{{ $games->count() }}</h3>
-                        <p class="mt-1 text-xs text-blue-400/60">Active in database</p>
-                    </div>
-                    <div class="rounded-full bg-gradient-to-br from-blue-600 to-blue-700 p-4 shadow-2xl shadow-blue-900/50">
-                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
+    @if($errors->any())
+        <div class="mb-4 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-700 p-4 text-red-700 dark:text-red-300">
+            <ul class="list-disc list-inside text-sm">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            <div class="group relative overflow-hidden rounded-2xl border border-purple-900/40 bg-gradient-to-br from-slate-800 via-slate-800/80 to-purple-900/30 p-6 hover:shadow-2xl hover:shadow-purple-900/30 transition-all duration-300">
-                <div class="absolute inset-0 bg-gradient-to-br from-purple-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="relative flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-semibold text-purple-400">Platforms</p>
-                        <h3 class="mt-3 text-4xl font-bold text-white">{{ $platforms->count() }}</h3>
-                        <p class="mt-1 text-xs text-purple-400/60">Gaming platforms</p>
-                    </div>
-                    <div class="rounded-full bg-gradient-to-br from-purple-600 to-purple-700 p-4 shadow-2xl shadow-purple-900/50">
-                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.5a2 2 0 00-1 3.75A2.001 2.001 0 0113 15H9" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <div class="group relative overflow-hidden rounded-2xl border border-amber-900/40 bg-gradient-to-br from-slate-800 via-slate-800/80 to-amber-900/30 p-6 hover:shadow-2xl hover:shadow-amber-900/30 transition-all duration-300">
-                <div class="absolute inset-0 bg-gradient-to-br from-amber-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="relative flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-semibold text-amber-400">With Photos</p>
-                        <h3 class="mt-3 text-4xl font-bold text-white">{{ $games->filter(fn($g) => $g->photo)->count() }}</h3>
-                        <p class="mt-1 text-xs text-amber-400/60">Visual coverage</p>
-                    </div>
-                    <div class="rounded-full bg-gradient-to-br from-amber-600 to-amber-700 p-4 shadow-2xl shadow-amber-900/50">
-                        <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-                            @error('release_year')
-                                <p class="mt-1 text-xs font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Developer</label>
-                            <input type="text" name="developer" value="{{ old('developer') }}" placeholder="Studio name" required class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500">
-                            @error('developer')
-                                <p class="mt-1 text-xs font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Publisher</label>
-                            <input type="text" name="publisher" value="{{ old('publisher') }}" placeholder="Publisher name" required class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500">
-                            @error('publisher')
-                                <p class="mt-1 text-xs font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Platform</label>
-                            <select name="platform_id" required class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
-                                <option value="">Select a platform</option>
-                                @foreach($platforms as $platform)
-                                    <option value="{{ $platform->id }}" {{ old('platform_id') == $platform->id ? 'selected' : '' }}>
-                                        {{ $platform->platform_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('platform_id')
-                                <p class="mt-1 text-xs font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Cover Photo</label>
-                            <input type="file" name="photo" accept="image/jpeg,image/png" class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500">
-                            <p class="mt-1 text-xs text-slate-600 dark:text-slate-400">JPG or PNG, Max 2MB</p>
-                            @error('photo')
-                                <p class="mt-1 text-xs font-medium text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <button type="submit" class="w-full rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 text-sm font-semibold text-white transition-all hover:shadow-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 active:scale-95">
-                                + Add Game
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-            <div class="mb-8 flex flex-col gap-4 rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-800 to-slate-800/70 p-6 shadow-lg shadow-black/20 md:flex-row md:items-end md:gap-4">
-                    <div class="flex-1">
-                        <label class="mb-2 block text-sm font-semibold text-slate-300">Search & Filter</label>
-                        <form method="GET" action="{{ route('games.index') }}" class="flex flex-col gap-3 md:flex-row md:gap-2">
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by title, developer..." 
-                                   class="flex-1 rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-2.5 text-sm text-white placeholder-slate-500 transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                            <select name="platform_id" class="rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-2.5 text-sm text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                                <option value="" class="bg-slate-900 text-white">All Platforms</option>
-                                @foreach($platforms as $platform)
-                                    <option value="{{ $platform->id }}" {{ request('platform_id') == $platform->id ? 'selected' : '' }} class="bg-slate-900 text-white">
-                                        {{ $platform->platform_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <button type="submit" class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-900/30 active:scale-95">
-                                Search
-                            </button>
-                            <a href="{{ route('games.index') }}" class="rounded-lg border border-slate-600 bg-slate-900/50 px-5 py-2.5 text-sm font-semibold text-slate-300 transition-all hover:bg-slate-700 hover:shadow-sm">
-                                Reset
-                            </a>
-                        </form>
-                    </div>
-
-                    <div class="flex flex-col gap-2 md:flex-row md:gap-2">
-                        <a href="{{ route('games.export', array_filter(request()->query())) }}" class="rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-5 py-2.5 text-center text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-emerald-900/30 hover:from-emerald-700 hover:to-emerald-800 active:scale-95">
-                            📊 Export PDF
-                        </a>
-                        <a href="{{ route('games.trash') }}" class="rounded-lg bg-gradient-to-r from-orange-600 to-orange-700 px-5 py-2.5 text-center text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-orange-900/30 hover:from-orange-700 hover:to-orange-800 active:scale-95">
-                            🗑️ Trash
-                        </a>
-                    </div>
-                </div>
-
-             
-                <div class="flex-1 overflow-auto rounded-xl border border-slate-200 dark:border-slate-700">
-                    <div class="mb-4 flex items-center justify-between px-6 pt-6">
-                        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Game Library</h2>
-                        <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">{{ $games->count() }} games</span>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full min-w-full">
-                            <thead>
-                                <tr class="border-b border-slate-200 bg-gradient-to-r from-slate-100 to-slate-50 dark:border-slate-700 dark:from-slate-800 dark:to-slate-900">
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-700 dark:text-slate-300">#</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-700 dark:text-slate-300">Photo</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-700 dark:text-slate-300">Title</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-700 dark:text-slate-300">Year</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-700 dark:text-slate-300">Developer</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-700 dark:text-slate-300">Publisher</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-700 dark:text-slate-300">Platform</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-slate-700 dark:text-slate-300">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                                @forelse($games as $game)
-                                <tr class="transition-colors hover:bg-blue-50/50 dark:hover:bg-slate-800/50">
-                                    <td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">{{ $loop->iteration }}</td>
-                                    <td class="px-6 py-4 text-sm">
-                                        @if($game->photo)
-                                            <img src="{{ asset('storage/games/' . $game->photo) }}" alt="{{ $game->title }}" class="h-12 w-12 rounded-lg object-cover ring-2 ring-slate-200 dark:ring-slate-700">
-                                        @else
-                                            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-sm font-bold text-white ring-2 ring-slate-200 dark:ring-slate-700">
-                                                {{ $game->getInitials() }}
-                                            </div>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $game->title }}</td>
-                                    <td class="px-6 py-4 text-sm text-slate-700 dark:text-slate-400">{{ $game->release_year }}</td>
-                                    <td class="px-6 py-4 text-sm text-slate-700 dark:text-slate-400">{{ $game->developer }}</td>
-                                    <td class="px-6 py-4 text-sm text-slate-700 dark:text-slate-400">{{ $game->publisher }}</td>
-                                    <td class="px-6 py-4 text-sm">
-                                        <span class="inline-block rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">{{ $game->platform->platform_name ?? 'N/A' }}</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm">
-                                        <button
-                                            class="font-semibold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                                            onclick="editGame('{{ $game->id }}', '{{ addslashes($game->title) }}', '{{ $game->release_year }}', '{{ addslashes($game->developer) }}', '{{ addslashes($game->publisher) }}', '{{ $game->platform_id }}')"
-                                        >
-                                            ✏️ Edit
-                                        </button>
-                                        <span class="mx-2 text-slate-400">·</span>
-                                        <form method="POST" action="{{ route('games.destroy', $game) }}" class="inline" onsubmit="return confirm('Move to trash?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="font-semibold text-red-600 transition-colors hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">🗑️ Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    {{-- Statistic Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="rounded-lg p-6" style="background: rgba(5, 5, 10, 0.95); border: 1px solid rgba(0, 255, 255, 0.1); box-shadow: 0 0 15px rgba(0, 255, 255, 0.05), inset 0 0 15px rgba(0, 255, 255, 0.02);">
+            <p class="text-xs font-medium text-cyan-400 mb-2">Total Games</p>
+            <p class="text-4xl font-bold text-white neon-text" style="color: #00ffff;">{{ $games->count() }}</p>
+        </div>
+        <div class="rounded-lg p-6" style="background: rgba(5, 5, 10, 0.95); border: 1px solid rgba(0, 255, 255, 0.1); box-shadow: 0 0 15px rgba(0, 255, 255, 0.05), inset 0 0 15px rgba(0, 255, 255, 0.02);">
+            <p class="text-xs font-medium text-cyan-400 mb-2">Active Platforms</p>
+            <p class="text-4xl font-bold text-white neon-text" style="color: #00ffff;">{{ $platforms->count() }}</p>
+        </div>
+        <div class="rounded-lg p-6" style="background: rgba(5, 5, 10, 0.95); border: 1px solid rgba(0, 255, 255, 0.1); box-shadow: 0 0 15px rgba(0, 255, 255, 0.05), inset 0 0 15px rgba(0, 255, 255, 0.02);">
+            <p class="text-xs font-medium text-cyan-400 mb-2">Games with Photos</p>
+            <p class="text-4xl font-bold text-white neon-text" style="color: #00ffff;">{{ $games->whereNotNull('photo')->count() }}</p>
         </div>
     </div>
 
-    <div id="editGameModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm">
-        <div class="w-full max-w-2xl overflow-y-auto rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-900 to-slate-800 p-8 shadow-2xl shadow-black/80">
-            <div class="mb-6 flex items-center justify-between">
-                <h2 class="text-2xl font-bold text-white">Edit Game</h2>
-                <button onclick="closeEditGameModal()" class="text-slate-400 hover:text-slate-200">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    {{-- Add New Game Form --}}
+    <div class="cyberpunk-card rounded-lg p-6 mb-6">
+        <h2 class="text-lg font-semibold text-cyan-400 mb-4 neon-text">Add New Game</h2>
+        <form action="{{ route('games.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Title</label>
+                    <input type="text" name="title" value="{{ old('title') }}" placeholder="Enter game title" required 
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                    @error('title')
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Release Year</label>
+                    <input type="text" name="release_year" value="{{ old('release_year') }}" placeholder="Enter release year" required maxlength="4"
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                    @error('release_year')
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Developer</label>
+                    <input type="text" name="developer" value="{{ old('developer') }}" placeholder="Enter developer" required 
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                    @error('developer')
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Publisher</label>
+                    <input type="text" name="publisher" value="{{ old('publisher') }}" placeholder="Enter publisher" required 
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                    @error('publisher')
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Platform</label>
+                    <select name="platform_id" required 
+                            class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                        <option value="">Select a platform</option>
+                        @foreach($platforms as $p) 
+                            <option value="{{ $p->id }}" {{ old('platform_id') == $p->id ? 'selected' : '' }}>{{ $p->platform_name }}</option> 
+                        @endforeach
+                    </select>
+                    @error('platform_id')
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Photo (JPG/PNG, Max 2MB)</label>
+                    <input type="file" name="photo" accept="image/jpeg,image/jpg,image/png" 
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-xs">
+                    @error('photo')
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+            <div class="pt-2">
+                <button type="submit" class="cyberpunk-button px-6 py-2 rounded-lg text-sm font-medium">
+                    Add Game
                 </button>
             </div>
+        </form>
+    </div>
 
-            <form id="editGameForm" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
-                <div class="grid gap-5 md:grid-cols-2">
-                    <div>
-                        <label class="mb-2 block text-sm font-semibold text-slate-300">Title</label>
-                        <input type="text" id="edit_title" name="title" required
-                               class="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-sm text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                    </div>
-
-                    <div>
-                        <label class="mb-2 block text-sm font-semibold text-slate-300">Release Year</label>
-                        <input type="text" id="edit_release_year" name="release_year" required
-                               class="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-sm text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                    </div>
-
-                    <div>
-                        <label class="mb-2 block text-sm font-semibold text-slate-300">Developer</label>
-                        <input type="text" id="edit_developer" name="developer" required
-                               class="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-sm text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                    </div>
-
-                    <div>
-                        <label class="mb-2 block text-sm font-semibold text-slate-300">Publisher</label>
-                        <input type="text" id="edit_publisher" name="publisher" required
-                               class="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-sm text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                    </div>
-
-                    <div>
-                        <label class="mb-2 block text-sm font-semibold text-slate-300">Platform</label>
-                        <select id="edit_platform_id" name="platform_id" required
-                                class="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-sm text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                            <option value="" class="bg-slate-900 text-white">Select a platform</option>
-                            @foreach($platforms as $platform)
-                                <option value="{{ $platform->id }}" class="bg-slate-900 text-white">{{ $platform->platform_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="mb-2 block text-sm font-semibold text-slate-300">Cover Photo</label>
-                        <input type="file" name="photo" accept="image/jpeg,image/png"
-                               class="w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-3 text-sm text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                    </div>
-                </div>
-
-                <div class="mt-8 flex justify-end gap-3">
-                    <button type="button" onclick="closeEditGameModal()"
-                            class="rounded-lg border border-slate-600 px-6 py-2.5 text-sm font-semibold text-slate-300 transition-all hover:bg-slate-700 hover:shadow-sm">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                            class="rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-blue-900/30 hover:from-blue-700 hover:to-blue-800 active:scale-95">
-                        Update Game
-                    </button>
-                </div>
-            </form>
+    {{-- Search, Filter, PDF & Trash --}}
+    <div class="cyberpunk-card rounded-lg p-4 mb-6">
+        <form method="GET" action="{{ route('dashboard') }}" class="flex flex-wrap gap-3 items-end mb-3">
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-xs font-medium text-cyan-400 mb-1">Search</label>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by title, developer, or publisher..." 
+                       class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+            </div>
+            <div class="min-w-[150px]">
+                <label class="block text-xs font-medium text-cyan-400 mb-1">Filter by Platform</label>
+                <select name="platform_id" 
+                        class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                    <option value="">All Platforms</option>
+                    @foreach($platforms as $p) 
+                        <option value="{{ $p->id }}" {{ request('platform_id') == $p->id ? 'selected' : '' }}>{{ $p->platform_name }}</option> 
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="cyberpunk-button px-4 py-2 rounded-lg text-sm font-medium">
+                    Search
+                </button>
+                @if(request('search') || request('platform_id'))
+                    <a href="{{ route('dashboard') }}" class="cyberpunk-button px-4 py-2 rounded-lg text-sm font-medium inline-block">
+                        Clear
+                    </a>
+                @endif
+            </div>
+        </form>
+        <div class="flex gap-2">
+            <a href="{{ route('games.export', request()->query()) }}" 
+               class="cyberpunk-button px-4 py-2 rounded-lg text-sm font-medium inline-block">
+                📄 Export PDF
+            </a>
+            <a href="{{ route('games.trash') }}" 
+               class="cyberpunk-button px-4 py-2 rounded-lg text-sm font-medium inline-block">
+                🗑️ Trash ({{ \App\Models\Game::onlyTrashed()->count() }})
+            </a>
         </div>
     </div>
 
-    <script>
-        function editGame(id, title, release_year, developer, publisher, platformId) {
-            document.getElementById('editGameModal').classList.remove('hidden');
-            document.getElementById('editGameModal').classList.add('flex');
-            document.getElementById('editGameForm').action = `/games/${id}`;
-            document.getElementById('edit_title').value = title;
-            document.getElementById('edit_release_year').value = release_year;
-            document.getElementById('edit_developer').value = developer;
-            document.getElementById('edit_publisher').value = publisher;
-            document.getElementById('edit_platform_id').value = platformId || '';
-        }
+    {{-- Game List Table --}}
+    <div class="cyberpunk-card rounded-lg overflow-hidden">
+        <div class="p-4 border-b border-cyan-500/30">
+            <h2 class="text-lg font-semibold text-cyan-400 neon-text">Game List</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left cyberpunk-table">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-3 text-sm font-semibold">#</th>
+                        <th class="px-4 py-3 text-sm font-semibold">Photo</th>
+                        <th class="px-4 py-3 text-sm font-semibold">Title</th>
+                        <th class="px-4 py-3 text-sm font-semibold">Release Year</th>
+                        <th class="px-4 py-3 text-sm font-semibold">Developer</th>
+                        <th class="px-4 py-3 text-sm font-semibold">Publisher</th>
+                        <th class="px-4 py-3 text-sm font-semibold">Platform</th>
+                        <th class="px-4 py-3 text-sm font-semibold text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($games as $game)
+                    <tr>
+                        <td class="px-4 py-3 text-sm">{{ $loop->iteration }}</td>
+                        <td class="px-4 py-3">
+                            @if($game->photo)
+                                <img src="{{ asset('storage/games/' . $game->photo) }}" alt="{{ $game->title }}" 
+                                     class="h-10 w-10 rounded-full object-cover border-2 border-cyan-500/30">
+                            @else
+                                <div class="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center font-bold text-white text-xs border-2 border-cyan-500/30">
+                                    {{ $game->getInitials() }}
+                                </div>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-sm font-medium text-cyan-300">{{ $game->title }}</td>
+                        <td class="px-4 py-3 text-sm">{{ $game->release_year }}</td>
+                        <td class="px-4 py-3 text-sm">{{ $game->developer }}</td>
+                        <td class="px-4 py-3 text-sm">{{ $game->publisher }}</td>
+                        <td class="px-4 py-3 text-sm">{{ $game->platform->platform_name ?? 'N/A' }}</td>
+                        <td class="px-4 py-3 text-sm text-right">
+                            <div class="flex gap-2 justify-end">
+                                <button onclick="editGame({{ $game->id }}, '{{ addslashes($game->title) }}', '{{ addslashes($game->developer) }}', '{{ addslashes($game->publisher) }}', '{{ $game->release_year }}', {{ $game->platform_id }}, '{{ $game->photo }}')" 
+                                        class="text-cyan-400 hover:text-cyan-300 font-medium neon-text" style="text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);">
+                                    Edit
+                                </button>
+                                <span class="text-cyan-500">|</span>
+                                <form action="{{ route('games.destroy', $game) }}" method="POST" class="inline" 
+                                      onsubmit="return confirm('Move this game to trash?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-pink-400 hover:text-pink-300 font-medium" style="text-shadow: 0 0 5px rgba(255, 0, 255, 0.8);">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="8" class="px-4 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                            @if(request('search') || request('platform_id'))
+                                No games found matching your search criteria.
+                            @else
+                                No games found. Add your first game above!
+                            @endif
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-        function closeEditGameModal() {
-            document.getElementById('editGameModal').classList.add('hidden');
-            document.getElementById('editGameModal').classList.remove('flex');
-        }
-    </script>
+{{-- Edit Game Modal --}}
+<div id="editGameModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4">
+    <div class="w-full max-w-3xl rounded-lg cyberpunk-card p-6">
+        <h2 class="text-xl font-semibold mb-4 text-cyan-400 neon-text">Edit Game</h2>
+        <form id="editGameForm" method="POST" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Title *</label>
+                    <input type="text" id="edit_title" name="title" required 
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Developer *</label>
+                    <input type="text" id="edit_developer" name="developer" required 
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Publisher *</label>
+                    <input type="text" id="edit_publisher" name="publisher" required 
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Release Year *</label>
+                    <input type="text" id="edit_release_year" name="release_year" required maxlength="4"
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Platform *</label>
+                    <select id="edit_platform_id" name="platform_id" required 
+                            class="w-full cyberpunk-input rounded-lg px-3 py-2 text-sm">
+                        @foreach($platforms as $p) 
+                            <option value="{{ $p->id }}">{{ $p->platform_name }}</option> 
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-cyan-400 mb-1">Photo (JPG/PNG, Max 2MB)</label>
+                    <input type="file" id="edit_photo" name="photo" accept="image/jpeg,image/jpg,image/png" 
+                           class="w-full cyberpunk-input rounded-lg px-3 py-2 text-xs">
+                    <div id="current_photo" class="mt-2"></div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t border-cyan-500/30">
+                <button type="button" onclick="closeEditModal()" 
+                        class="cyberpunk-button px-4 py-2 rounded-lg text-sm font-medium">
+                    Cancel
+                </button>
+                <button type="submit" 
+                        class="cyberpunk-button px-4 py-2 rounded-lg text-sm font-medium">
+                    Update Game
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const storageGamesPath = '{{ asset("storage/games") }}';
+
+function editGame(id, title, developer, publisher, releaseYear, platformId, photo) {
+    const modal = document.getElementById('editGameModal');
+    const form = document.getElementById('editGameForm');
+    
+    form.action = `/games/${id}`;
+    document.getElementById('edit_title').value = title;
+    document.getElementById('edit_developer').value = developer;
+    document.getElementById('edit_publisher').value = publisher;
+    document.getElementById('edit_release_year').value = releaseYear;
+    document.getElementById('edit_platform_id').value = platformId;
+    
+    const currentPhotoDiv = document.getElementById('current_photo');
+    if (photo) {
+        currentPhotoDiv.innerHTML = `<p class="text-xs text-cyan-400 mb-1">Current Photo:</p><img src="${storageGamesPath}/${photo}" alt="${title}" class="h-16 w-16 rounded-full object-cover border-2 border-cyan-500/30">`;
+    } else {
+        currentPhotoDiv.innerHTML = '<p class="text-xs text-cyan-400">No photo uploaded</p>';
+    }
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('editGameModal');
+    modal.classList.remove('flex');
+    modal.classList.add('hidden');
+}
+
+// Close modal on outside click
+document.getElementById('editGameModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEditModal();
+    }
+});
+</script>
 </x-layouts.app>
